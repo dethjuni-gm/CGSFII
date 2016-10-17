@@ -1,8 +1,8 @@
-#include "EngineLayerHeader.h"
+#include "StdAfx.h"
 #include "SFPacket.h"
-#include "../BaseLayer/SFCompressor.h"
-#include "../BaseLayer/SFCompressZLib.h"
-
+#include "SFCompressor.h"
+#include "SFCompressZLib.h"
+#include "SFChecksum.h"
 #include "SFCGSFPacketProtocol.h"
 
 USHORT SFPacket::m_packetMaxSize = MAX_PACKET_SIZE;
@@ -75,7 +75,7 @@ bool SFPacket::Encode(unsigned short packetSize, int packetOption)
 		return true;
 	}
 
-	char* pDestBuf[MAX_PACKET_SIZE] = { 0, };
+	BYTE pDestBuf[MAX_PACKET_SIZE] = { 0, };
 	int destSize = packetSize - sizeof(SFPacketHeader);
 
 	DWORD dwResult = 0;
@@ -189,7 +189,7 @@ bool SFPacket::Decode(unsigned short packetSize, int& errorCode)
 
 BOOL SFPacket::GetDataCRC(BYTE* pDataBuf, DWORD DataSize, DWORD& dwDataCRC)
 {
-	BOOL Result = m_FastCRC.GetZLibCRC((BYTE*)pDataBuf, DataSize, (unsigned int&)dwDataCRC);
+	BOOL Result = m_FastCRC.GetZLibCRC((BYTE*)pDataBuf, DataSize, dwDataCRC);
 
 	if(TRUE != Result)
 	{

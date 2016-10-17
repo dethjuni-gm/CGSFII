@@ -1,3 +1,4 @@
+#include "StdAfx.h"
 #include "SFPacketIOBuffer.h"
 
 SFPacketIOBuffer::SFPacketIOBuffer(void)
@@ -28,22 +29,22 @@ bool SFPacketIOBuffer::GetPacket(SFPacketHeader& header, char* pBuffer, unsigned
 
 	unsigned int dataSize = header.dataSize;
 
-	if (dataSize > packetSize )
+	if (dataSize > packetSize - sizeof(SFPacketHeader))
 	{
 		SetHead(oldHead);
 		errorCode = PACKETIO_ERROR_DATA;
 		return false;
 	}
 
-	if (GetUsedBufferSize() < (int)dataSize - sizeof(SFPacketHeader))
+	if (GetUsedBufferSize() < (int)dataSize)
 	{
 		SetHead(oldHead);
 		return false;
 	}
 
-	int getDataSize = GetData((char*)pBuffer, dataSize - sizeof(SFPacketHeader));
+	int getDataSize = GetData((char*)pBuffer, dataSize);
 
-	if (dataSize != (unsigned int)getDataSize + sizeof(SFPacketHeader))
+	if (dataSize != (unsigned int)getDataSize)
 	{
 		SetHead(oldHead);
 		errorCode = PACKETIO_ERROR_DATA;
